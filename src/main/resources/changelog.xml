@@ -1,0 +1,58 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd" changeLogId="337162de-c346-467f-8796-dde85c0ae1b6">
+
+    <changeSet id="1" author="IrinaYanushkevich" runOnChange="true">
+        <createTable tableName="post">
+            <column  name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_status" type="varchar (25)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="writer_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="IrinaYanushkevich" runOnChange="true">
+        <createTable tableName="label">
+            <column  name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(15)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="post_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="IrinaYanushkevich" runOnChange="true">
+        <createTable tableName="writer">
+            <column  name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(12)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="last_name" type="varchar(15)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
