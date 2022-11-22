@@ -50,41 +50,10 @@ public class JdbcPostRepositoryImpl implements PostRepository {
         return null;
     }
 
-    /*
-    List<Post> posts = readFile();
-    Post postAfterEdit = null;
-    for (Post p : posts) {
-        if (p.getId().equals(post.getId())) {
-            p.setStatus(PostStatus.ACTIVE);
-            p.setUpdated(setDate());
-            p.setContent(post.getContent());
-            p.setLabels(post.getLabels());
-            writeFile(posts);
-            postAfterEdit = p;
-            break;
-        }
-    }
-    return postAfterEdit;
-}
-*/
     @Override
     public boolean delete(Long id) {
         return false;
     }
-        /*
-        List<Post> posts = readFile();
-        boolean result = false;
-        for (Post p : posts) {
-            if (p.getId().equals(id)) {
-                p.setStatus(PostStatus.DELETED);
-                p.setUpdated(setDate());
-                writeFile(posts);
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }*/
 
     @Override
     public List<Post> getAll() {
@@ -108,11 +77,15 @@ public class JdbcPostRepositoryImpl implements PostRepository {
     }
 
     private List<Label> getPostLabels(Long idPost) {
-        JdbcLabelRepositoryImpl labelRep = new JdbcLabelRepositoryImpl();
+       // JdbcLabelRepositoryImpl labelRep = new JdbcLabelRepositoryImpl();
         List<Label> labels = new ArrayList<>();
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getPostLabels)) {
             preparedStatement.setLong(1, idPost);
-            labels = labelRep.getAll();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Label label = new Label(resultSet.getLong("id"), resultSet.getString("name"));
+                labels.add(label);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -122,7 +95,7 @@ public class JdbcPostRepositoryImpl implements PostRepository {
 
     private long generateId() {
         List<Post> posts = getAll();
-        long id = 0;
+        long id = 1;
         Optional<Post> p = posts.stream().max(Comparator.comparing(Post::getId));
         if (p.isPresent()) {
             id = p.get().getId() + 1;

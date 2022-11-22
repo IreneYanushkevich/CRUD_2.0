@@ -88,7 +88,7 @@ public class JDBCWriterRepositoryImpl implements WriterRepository {
     }
 
     private long generateId(List<Writer> writers) {
-        long id = 0;
+        long id = 1;
         Optional<Writer> w = writers.stream().max(Comparator.comparing(Writer::getId));
         if (w.isPresent()) {
             id = w.get().getId() + 1;

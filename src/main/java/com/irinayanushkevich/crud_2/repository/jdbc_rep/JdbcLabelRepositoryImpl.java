@@ -79,7 +79,7 @@ public class JdbcLabelRepositoryImpl implements LabelRepository {
 
     private long generateId() {
         List<Label> labels = getAll();
-        long id = 0;
+        long id = 1;
         Optional<Label> l = labels.stream().max(Comparator.comparing(Label::getId));
         if (l.isPresent()) {
             id = l.get().getId() + 1;
