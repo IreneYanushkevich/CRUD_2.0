@@ -18,27 +18,20 @@ public class JdbcPostRepositoryImpl implements PostRepository {
 
     @Override
     public Post create(Post post) {
-        Post newPost = null;
         long id = generateId();
         Date date = setMyDate();
-        try (PreparedStatement preparedStatementPost = JdbcConnector.getPreparedStatement(SqlQuery.createPost);
-             PreparedStatement preparedStatementLabels = JdbcConnector.getPreparedStatement(SqlQuery.addLabelToPost)) {
+        post.setLabels(changeLabelPostId(post.getLabels(), id));
+        try (PreparedStatement preparedStatementPost = JdbcConnector.getPreparedStatement(SqlQuery.createPost)) {
             preparedStatementPost.setLong(1, id);
             preparedStatementPost.setString(2, post.getContent());
             preparedStatementPost.setDate(3, date);
             preparedStatementPost.setDate(4, date);
             preparedStatementPost.setString(5, String.valueOf(PostStatus.UNDER_REVIEW));
             preparedStatementPost.executeUpdate();
-            for (Label label : post.getLabels()) {
-                preparedStatementLabels.setLong(1, id);
-                preparedStatementLabels.setLong(2, label.getId());
-                preparedStatementLabels.executeUpdate();
-            }
-            newPost = getById(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return newPost;
+        return getById(id);
     }
 
     @Override
@@ -47,12 +40,30 @@ public class JdbcPostRepositoryImpl implements PostRepository {
     }
 
     public Post edit(Post post) {
-        return null;
+        post.setLabels(changeLabelPostId(post.getLabels(), post.getId()));
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.editPost)) {
+            preparedStatement.setString(1, post.getContent());
+            preparedStatement.setDate(2, setMyDate());
+            preparedStatement.setString(3, String.valueOf(PostStatus.ACTIVE));
+            preparedStatement.setLong(4, post.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return getById(post.getId());
     }
 
     @Override
     public boolean delete(Long id) {
-        return false;
+        boolean deleted = false;
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deletePost)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+            deleted = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return deleted;
     }
 
     @Override
@@ -77,7 +88,6 @@ public class JdbcPostRepositoryImpl implements PostRepository {
     }
 
     private List<Label> getPostLabels(Long idPost) {
-       // JdbcLabelRepositoryImpl labelRep = new JdbcLabelRepositoryImpl();
         List<Label> labels = new ArrayList<>();
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getPostLabels)) {
             preparedStatement.setLong(1, idPost);
@@ -91,7 +101,6 @@ public class JdbcPostRepositoryImpl implements PostRepository {
         }
         return labels;
     }
-
 
     private long generateId() {
         List<Post> posts = getAll();
@@ -107,5 +116,18 @@ public class JdbcPostRepositoryImpl implements PostRepository {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
         return Date.valueOf(now.format(formatter));
+    }
+
+    private List<Label> changeLabelPostId(List<Label> labels, long id) {
+        try (PreparedStatement preparedStatementLabels = JdbcConnector.getPreparedStatement(SqlQuery.addLabelToPost)) {
+            for (Label label : labels) {
+                preparedStatementLabels.setLong(1, id);
+                preparedStatementLabels.setLong(2, label.getId());
+                preparedStatementLabels.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return labels;
     }
 }
