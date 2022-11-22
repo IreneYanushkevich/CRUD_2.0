@@ -57,7 +57,9 @@ public class JdbcPostRepositoryImpl implements PostRepository {
     public boolean delete(Long id) {
         boolean deleted = false;
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deletePost)) {
-            preparedStatement.setLong(1, id);
+            preparedStatement.setDate(1, setMyDate());
+            preparedStatement.setString(2, PostStatus.DELETED.toString());
+            preparedStatement.setLong(3, id);
             preparedStatement.executeUpdate();
             deleted = true;
         } catch (SQLException e) {
