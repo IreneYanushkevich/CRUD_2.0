@@ -1,4 +1,4 @@
-package com.irinayanushkevich.crud_2.main;
+package com.irinayanushkevich.crud_2;
 
 import com.irinayanushkevich.crud_2.view.Console;
 
