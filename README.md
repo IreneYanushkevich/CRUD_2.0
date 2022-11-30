@@ -30,7 +30,7 @@ class JdbcWriterRepositoryImpl implements WriterRepository
 
 ## ИНСТРУКЦИЯ ПО ЗАПУСКУ ПРИЛОЖЕНИЯ:
 
-1. Предварительно убедитесь, что на вашем компьютере установлены JVM и JRE.
+1. Предварительно убедитесь, что на вашем компьютере установлены JVM, JRE, MySQL, JDBC, Maven, Liquibase, JUnit, Mockito.
 2. Скачать программу CRUDAPP.jar по ссылке https://github.com/IreneYanushkevich/CRUD_2.0/blob/master/CRUD_2.0.jar                                                                                                                                                                
 3. Вызвать командную строку сочетанием клавиш WIN+R.
 4. Прописать в командной строке: cd пробел и путь к папке со скачанной программой + Enter (пример: C:\Users\Irene>cd C:\Users\Irene\IdeaProjects\CRUD_2.0\out\artifacts\CRUD_2.0_jar)
