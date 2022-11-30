@@ -27,7 +27,7 @@ public class Console {
 
     private boolean workWithCategory(int answer) {
         switch (answer) {
-            //case 1 -> comView.run("writer");
+            case 1 -> comView.run("writer");
             case 2 -> comView.run("post");
             case 3 -> comView.run( "label");
             case 0 -> {

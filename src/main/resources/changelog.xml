@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
         changeLogId="337162de-c346-467f-8796-dde85c0ae1b6">
 
-    <changeSet id="1" author="irina.yanushkevich" runOnChange="true">
+    <changeSet id="1" author="irina" runOnChange="true">
         <createTable tableName="writer">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -20,7 +20,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2" author="irina.yanushkevich" runOnChange="true">
+    <changeSet id="2" author="irina" runOnChange="true">
         <createTable tableName="post">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -50,7 +50,7 @@
                                  onUpdate="CASCADE"/>
     </changeSet>
 
-    <changeSet id="3" author="irina.yanushkevich" runOnChange="true">
+    <changeSet id="3" author="irina" runOnChange="true">
         <createTable tableName="label">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -67,28 +67,28 @@
     <changeSet id="4" author="irina.yanushkevich" runOnChange="true">
         <createTable tableName="posts_labels">
             <column name="post_id" type="int">
-                <constraints primaryKey="true" nullable="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="label_id" type="int">
-                <constraints primaryKey="true" nullable="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
         </createTable>
         <addUniqueConstraint
                 columnNames="post_id, label_id"
                 tableName="posts_labels"/>
-        <addForeignKeyConstraint baseColumnNames="post_id"
-                                 baseTableName="posts_labels"
-                                 constraintName="fk_post_id_label_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="post"
-                                 onDelete="SET NULL"
-                                 onUpdate="CASCADE"/>
         <addForeignKeyConstraint baseColumnNames="label_id"
                                  baseTableName="posts_labels"
-                                 constraintName="fk_post_id_label_id"
+                                 constraintName="fk_post_label_id"
                                  referencedColumnNames="id"
                                  referencedTableName="label"
-                                 onDelete="SET NULL"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseColumnNames="post_id"
+                                 baseTableName="posts_labels"
+                                 constraintName="fk_post_id_label"
+                                 referencedColumnNames="id"
+                                 referencedTableName="post"
+                                 onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
     </changeSet>
 

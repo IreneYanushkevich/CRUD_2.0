@@ -45,4 +45,16 @@ public class JdbcConnector {
         }
         return preparedStatement;
     }
+
+    public static PreparedStatement getPreparedStatementWithKeys(String SqlQuery) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = getConnection().prepareStatement(SqlQuery, Statement.RETURN_GENERATED_KEYS);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return preparedStatement;
+    }
+
+
 }

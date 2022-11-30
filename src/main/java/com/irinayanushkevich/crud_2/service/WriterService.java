@@ -1,14 +1,14 @@
-/*package com.irinayanushkevich.crud_2.service;
+package com.irinayanushkevich.crud_2.service;
 
 import com.irinayanushkevich.crud_2.model.Writer;
 import com.irinayanushkevich.crud_2.repository.WriterRepository;
-//import com.irinayanushkevich.crud_2.repository.jdbc_rep.JDBCWriterRepositoryImpl;
+import com.irinayanushkevich.crud_2.repository.jdbc_rep.JdbcWriterRepositoryImpl;
 
 import java.util.List;
 
 public class WriterService {
 
-   /* private final WriterRepository writerRep = new JDBCWriterRepositoryImpl();
+    private final WriterRepository writerRep = new JdbcWriterRepositoryImpl();
 
     public Writer create(Writer writer) {
        return writerRep.create(writer);
@@ -29,4 +29,4 @@ public class WriterService {
     public List<Writer> getAll() {
         return writerRep.getAll();
     }
-}*/
+}

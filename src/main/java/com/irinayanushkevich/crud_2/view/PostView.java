@@ -40,7 +40,7 @@ public class PostView {
             }
             case 4 -> {
                 Long id = cv.askId();
-                if (pc.delete(id)) {
+                if (pc.getById(id) != null && pc.delete(id)) {
                     System.out.println("\nThe post with id = " + id + " was deleted.");
                 } else {
                     System.out.println("\nA post with this id doesn't exist.");
@@ -73,9 +73,9 @@ public class PostView {
         List<Label> chosen = new ArrayList<>();
         while (true) {
             System.out.println("\nInput the labels' id for adding to post from the list.\n" + labels);
-            System.out.println("\nOr  '-2' for exit; '-1' for adding a new one");
+            System.out.println("\nOr  '0' for exit; '-1' for adding a new one");
             long id = cv.askId();
-            if (id == -2) {
+            if (id == 0) {
                 break;
             } else if (id == -1) {
                 Label newLabel = lc.create(cv.askString("Input new name >>>>>"));
@@ -101,8 +101,7 @@ public class PostView {
                 Choose what you want to change?
                 1 - content
                 2 - labels
-                3 - content and labels
-                4 - leave all as it is, change status on 'Active' only
+                3 - leave all as it is, change status on 'ACTIVE' only
                 0 - exit
                 """);
     }
@@ -111,22 +110,17 @@ public class PostView {
         Post postAfterEdit = null;
         long id = post.getId();
         printSubMenuP();
-        int choice = cv.getAnswer(0, 4);
+        int choice = cv.getAnswer(0, 3);
         switch (choice) {
             case 1 -> {
-                String content = cv.askString("Please, write your post content >>>>>>");
+                String content = cv.askString("Please, write new post content >>>>>>");
                 postAfterEdit = pc.edit(id, content, post.getLabels());
             }
             case 2 -> {
                 List<Label> labels = chooseLabels();
                 postAfterEdit = pc.edit(id, post.getContent(), labels);
             }
-            case 3 -> {
-                String content = cv.askString("Please, write your post content >>>>>>");
-                List<Label> labels = chooseLabels();
-                postAfterEdit = pc.edit(id, content, labels);
-            }
-            case 4 -> postAfterEdit = pc.edit(id, post.getContent(), post.getLabels());
+            case 3 -> postAfterEdit = pc.edit(id, post.getContent(), post.getLabels());
             case 0 -> {
             }
         }

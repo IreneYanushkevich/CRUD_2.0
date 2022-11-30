@@ -1,4 +1,4 @@
-/*package com.irinayanushkevich.crud_2.controller;
+package com.irinayanushkevich.crud_2.controller;
 
 import com.irinayanushkevich.crud_2.model.Post;
 import com.irinayanushkevich.crud_2.model.Writer;
@@ -33,4 +33,3 @@ public class WriterController {
     }
 }
 
-*/

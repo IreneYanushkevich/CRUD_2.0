@@ -1,4 +1,4 @@
-/*package com.irinayanushkevich.crud_2.view;
+package com.irinayanushkevich.crud_2.view;
 
 import com.irinayanushkevich.crud_2.controller.PostController;
 import com.irinayanushkevich.crud_2.controller.WriterController;
@@ -44,7 +44,7 @@ public class WriterView {
             }
             case 4 -> {
                 Long id = cv.askId();
-                if (wc.delete(id)) {
+                if (wc.getById(id) != null && wc.delete(id)) {
                     System.out.println("\nThe writer with id = " + id + " was deleted.");
                 } else {
                     System.out.println("\nA writer with this id doesn't exist.");
@@ -70,9 +70,9 @@ public class WriterView {
         List<Post> choice = new ArrayList<>();
         while (true) {
             System.out.println("\nInput the posts' id for adding to writer from the list.\n" + posts);
-            System.out.println("\nOr '-2' for exit, '-1' for adding a new post. >>>>>>>>\n");
+            System.out.println("\nOr '0' for exit, '-1' for adding a new post. >>>>>>>>\n");
             long id = cv.askId();
-            if (id == -2) {
+            if (id == 0) {
                 break;
             } else if (id == -1) {
                 PostView pv = new PostView(cv);
@@ -125,4 +125,3 @@ public class WriterView {
                 """);
     }
 }
-*/

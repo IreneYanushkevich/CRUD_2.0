@@ -6,13 +6,12 @@ import com.irinayanushkevich.crud_2.model.Label;
 import java.util.List;
 
 public class LabelView {
-
     private final CommonView cv;
     private final LabelController lc = new LabelController();
-
     public LabelView(CommonView cv) {
         this.cv = cv;
     }
+
 
     public boolean workWithLabelActions(int act) {
         switch (act) {
@@ -38,7 +37,6 @@ public class LabelView {
             }
             case 4 -> {
                 Long id = cv.askId();
-
                 if (lc.getById(id) != null && lc.delete(id)) {
                     System.out.println("\nThe label with id = " + id + " was deleted.");
                 } else {

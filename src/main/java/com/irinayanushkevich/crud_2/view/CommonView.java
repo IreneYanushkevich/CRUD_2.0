@@ -7,7 +7,7 @@ public class CommonView {
     private final Scanner scanner = new Scanner(System.in);
     private final LabelView lv = new LabelView(this);
     private final PostView pv = new PostView(this);
-   // private final WriterView wv = new WriterView(this);
+    private final WriterView wv = new WriterView(this);
 
     public void run(String category) {
         int act;
@@ -16,7 +16,7 @@ public class CommonView {
             printActions(category);
             act = getAnswer(0, 5);
             switch (category) {
-              //  case "writer" -> isFinish = wv.workWithWriterActions(act);
+                case "writer" -> isFinish = wv.workWithWriterActions(act);
                 case "post" -> isFinish = pv.workWithPostActions(act);
                 case "label" -> isFinish = lv.workWithLabelActions(act);
             }
@@ -72,7 +72,7 @@ public class CommonView {
 
     public void printResultId(Object obj) {
         if (obj == null) {
-            System.out.println("\nPosition with this index doesn't exist.");
+            System.out.println("\nPosition with this id doesn't exist.");
         } else {
             System.out.println("\nDone! Work with the next position is completed: " + obj);
         }

@@ -1,99 +1,142 @@
-/*package com.irinayanushkevich.crud_2.repository.jdbc_rep;
+package com.irinayanushkevich.crud_2.repository.jdbc_rep;
 
+import com.irinayanushkevich.crud_2.model.Label;
+import com.irinayanushkevich.crud_2.model.Post;
+import com.irinayanushkevich.crud_2.model.PostStatus;
 import com.irinayanushkevich.crud_2.repository.WriterRepository;
+import com.irinayanushkevich.crud_2.model.Writer;
 
 import java.io.*;
-import java.lang.reflect.Type;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class JDBCWriterRepositoryImpl implements WriterRepository {
+public class JdbcWriterRepositoryImpl implements WriterRepository {
+
+    private final JdbcPostRepositoryImpl postRepository = new JdbcPostRepositoryImpl();
 
     @Override
     public Writer create(Writer writer) {
-        List<Writer> writers = readFile();
-        writer.setId(generateId(writers));
-        writers.add(writer);
-        writeFile(writers);
-        return writer;
+        Long id;
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatementWithKeys(SqlQuery.createWriter)) {
+            preparedStatement.setString(1, writer.getFirstName());
+            preparedStatement.setString(2, writer.getLastName());
+            preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            id = getId(resultSet);
+            setWriterIdToPost(writer.getPosts(), id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return getById(id);
     }
 
     @Override
     public Writer getById(Long id) {
-        List<Writer> writers = readFile();
-        return writers.stream().filter(writer -> writer.getId().equals(id)).findFirst().orElse(null);
+        return getAll().stream().filter(writer -> writer.getId().equals(id)).findFirst().orElse(null);
     }
 
     public Writer edit(Writer writer) {
-        List<Writer> writers = readFile();
-        Writer writerAfterEdit = null;
-        for (Writer w : writers) {
-            if (w.getId().equals(writer.getId())) {
-                w.setFirstName(writer.getFirstName());
-                w.setLastName(writer.getLastName());
-                w.setPosts(writer.getPosts());
-                writeFile(writers);
-                writerAfterEdit = w;
-                break;
-            }
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.editWriter)) {
+            preparedStatement.setString(1, writer.getFirstName());
+            preparedStatement.setString(2, writer.getLastName());
+            preparedStatement.setLong(3, writer.getId());
+            preparedStatement.executeUpdate();
+            setWriterIdToPost(writer.getPosts(), writer.getId());
+           // deleteOldDependencies(post.getId());
+            //fillDependencies(post.getLabels(), post.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return writerAfterEdit;
+        return getById(writer.getId());
     }
 
     @Override
     public boolean delete(Long id) {
-        List<Writer> writers = readFile();
-        boolean result = false;
-        Writer forDel = null;
-        for (Writer w : writers) {
-            if (w.getId().equals(id)) {
-                forDel = w;
-                result = true;
-                break;
-            }
+        boolean deleted = false;
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteWriter)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+            deleted = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        writers.remove(forDel);
-        writeFile(writers);
-        return result;
+        return deleted;
     }
 
     @Override
     public List<Writer> getAll() {
-        return readFile();
-    }
-
-    private List<Writer> readFile() {
-        List<Writer> w = new ArrayList<>();
-        try (Reader reader = new FileReader(file)) {
-            Type type = new TypeToken<ArrayList<Writer>>() {
-            }.getType();
-            w = new Gson().fromJson(reader, type);
-            if (w == null) {
-                w = new ArrayList<>();
+        List<Writer> writers = new ArrayList<>();
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getAllWriters)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Writer writer = mapResultSetToWriter(resultSet);
+                writers.add(writer);
             }
-        } catch (IOException e) {
-            System.out.println("File doesn't exist");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return w;
+        return writers;
     }
 
-    private void writeFile(List<Writer> writers) {
-        try (Writer writer = new FileWriter(file)) {
-            gson.toJson(writers, writer);
-        } catch (IOException e) {
-            System.out.println("Writing file error: " + e);
+    private Writer mapResultSetToWriter(ResultSet resultSet) {
+        try {
+            Writer writer = new Writer();
+            writer.setId(resultSet.getLong("id"));
+            writer.setFirstName(resultSet.getString("first_name"));
+            writer.setLastName(resultSet.getString("last_name"));
+            writer.setPosts(getWriterPosts(writer.getId()));
+            return writer;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    private long generateId(List<Writer> writers) {
-        long id = 1;
-        Optional<Writer> w = writers.stream().max(Comparator.comparing(Writer::getId));
-        if (w.isPresent()) {
-            id = w.get().getId() + 1;
+    private List<Post> getWriterPosts(Long writerId) {
+        List<Post> posts = new ArrayList<>();
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getWriterPosts)) {
+            preparedStatement.setLong(1, writerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Post post = postRepository.mapResultSetToPost(resultSet);
+                posts.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return posts;
+    }
+
+    private Long getId(ResultSet resultSet) {
+        Long id = null;
+        try {
+            if (resultSet != null && resultSet.next()) {
+                id = resultSet.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return id;
     }
+
+    private void setWriterIdToPost(List<Post> posts, Long id) {
+        for (Post post : posts) {
+            try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.setWriterIdToPost)) {
+                preparedStatement.setLong(1, id);
+                preparedStatement.setLong(2, post.getId());
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
-*/
