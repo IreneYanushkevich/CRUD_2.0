@@ -55,6 +55,4 @@ public class JdbcConnector {
         }
         return preparedStatement;
     }
-
-
 }

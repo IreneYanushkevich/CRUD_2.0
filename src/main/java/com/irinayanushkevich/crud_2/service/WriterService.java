@@ -11,7 +11,7 @@ public class WriterService {
     private final WriterRepository writerRep = new JdbcWriterRepositoryImpl();
 
     public Writer create(Writer writer) {
-       return writerRep.create(writer);
+        return writerRep.create(writer);
     }
 
     public Writer getById(Long id) {

@@ -63,7 +63,7 @@ public class JdbcLabelRepositoryImpl implements LabelRepository {
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getAllLabels)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Label label = new Label("test");
+                Label label = new Label();
                 label.setId(resultSet.getLong("id"));
                 label.setName(resultSet.getString("name"));
                 labels.add(label);

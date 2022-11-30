@@ -5,7 +5,7 @@ public class Label {
     private Long id;
     private String name;
 
-    public Label(String test) {
+    public Label() {
     }
 
     public Label(Long id, String name) {

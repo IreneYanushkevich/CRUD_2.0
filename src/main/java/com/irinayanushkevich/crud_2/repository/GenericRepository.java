@@ -1,7 +1,5 @@
 package com.irinayanushkevich.crud_2.repository;
 
-import com.irinayanushkevich.crud_2.model.Label;
-
 import java.util.List;
 
 public interface GenericRepository<T, ID> {

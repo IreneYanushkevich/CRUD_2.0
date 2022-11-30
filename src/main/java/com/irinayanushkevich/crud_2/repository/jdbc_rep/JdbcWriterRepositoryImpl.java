@@ -1,19 +1,14 @@
 package com.irinayanushkevich.crud_2.repository.jdbc_rep;
 
-import com.irinayanushkevich.crud_2.model.Label;
 import com.irinayanushkevich.crud_2.model.Post;
-import com.irinayanushkevich.crud_2.model.PostStatus;
-import com.irinayanushkevich.crud_2.repository.WriterRepository;
 import com.irinayanushkevich.crud_2.model.Writer;
+import com.irinayanushkevich.crud_2.repository.WriterRepository;
 
-import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class JdbcWriterRepositoryImpl implements WriterRepository {
 
@@ -48,8 +43,6 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             preparedStatement.setLong(3, writer.getId());
             preparedStatement.executeUpdate();
             setWriterIdToPost(writer.getPosts(), writer.getId());
-           // deleteOldDependencies(post.getId());
-            //fillDependencies(post.getLabels(), post.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
