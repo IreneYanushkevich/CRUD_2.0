@@ -42,6 +42,7 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             preparedStatement.setString(2, writer.getLastName());
             preparedStatement.setLong(3, writer.getId());
             preparedStatement.executeUpdate();
+            deleteOldDependencies(writer.getId());
             setWriterIdToPost(writer.getPosts(), writer.getId());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -130,6 +131,15 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void deleteOldDependencies(Long id) {
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteOldDependenciesWP)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -148,7 +148,7 @@ public class JdbcPostRepositoryImpl implements PostRepository {
     }
 
     private void deleteOldDependencies(Long id) {
-        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteOldDependencies)) {
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteOldDependenciesPL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

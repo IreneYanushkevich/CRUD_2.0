@@ -13,7 +13,7 @@ public class SqlQuery {
     public static final String editPost = "UPDATE post SET content = ?, updated = ?, post_status = ?  WHERE id = ?";
     public static final String deletePost = "UPDATE post SET updated = ?, post_status = ? WHERE id = ?";
     public static final String fillDependencies = "INSERT INTO posts_labels (post_id, label_id) VALUES (?, ?)";
-    public static final String deleteOldDependencies = "DELETE FROM posts_labels WHERE post_id = ?";
+    public static final String deleteOldDependenciesPL = "DELETE FROM posts_labels WHERE post_id = ?";
     //  public static final String getAllPosts = "SELECT * FROM post p LEFT JOIN posts_labels pl ON pl.post_id = p.id LEFT JOIN label l ON l.id = pl.label_id";
     public static final String getAllPosts = "SELECT * FROM post";
     public static final String getPostLabels = "SELECT * FROM label l LEFT JOIN posts_labels pl ON pl.label_id = l.id WHERE post_id = ?";
@@ -25,4 +25,5 @@ public class SqlQuery {
     public static final String getWriterPosts = "SELECT * FROM post WHERE writer_id = ?";
     public static final String deleteWriter = "DELETE FROM writer where id = ?";
     public static final String editWriter = "UPDATE writer SET first_name = ?, last_name = ? WHERE id = ?";
+    public static final String deleteOldDependenciesWP = "UPDATE post SET writer_id = null WHERE writer_id = ?";
 }
