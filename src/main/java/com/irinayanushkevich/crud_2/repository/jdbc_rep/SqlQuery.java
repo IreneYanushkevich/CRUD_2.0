@@ -26,4 +26,5 @@ public class SqlQuery {
     public static final String deleteWriter = "DELETE FROM writer where id = ?";
     public static final String editWriter = "UPDATE writer SET first_name = ?, last_name = ? WHERE id = ?";
     public static final String deleteOldDependenciesWP = "UPDATE post SET writer_id = null WHERE writer_id = ?";
+
 }

@@ -134,6 +134,7 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
         }
     }
 
+
     private void deleteOldDependencies(Long id) {
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteOldDependenciesWP)) {
             preparedStatement.setLong(1, id);
