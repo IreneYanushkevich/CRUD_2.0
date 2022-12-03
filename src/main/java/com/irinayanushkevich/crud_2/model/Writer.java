@@ -3,7 +3,6 @@ package com.irinayanushkevich.crud_2.model;
 import java.util.List;
 
 public class Writer {
-
     private Long id;
     private String firstName;
     private String lastName;

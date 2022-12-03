@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 
 public class JdbcPostRepositoryImpl implements PostRepository {
-
     @Override
     public Post create(Post post) {
         Long id;
@@ -27,17 +26,34 @@ public class JdbcPostRepositoryImpl implements PostRepository {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             id = getId(resultSet);
+            post.setId(id);
+            post.setCreated(date.toString());
+            post.setUpdated(date.toString());
+            post.setStatus(PostStatus.UNDER_REVIEW);
             fillDependencies(post.getLabels(), id);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return getById(id);
+        return post;
     }
 
     @Override
     public Post getById(Long id) {
-        return getAll().stream().filter(post -> post.getId().equals(id)).findFirst().orElse(null);
+        Post post;
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getByIdPost)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                post = mapResultSetToPost(resultSet);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return post;
     }
 
     public Post edit(Post post) {
@@ -47,13 +63,15 @@ public class JdbcPostRepositoryImpl implements PostRepository {
             preparedStatement.setString(3, PostStatus.ACTIVE.toString());
             preparedStatement.setLong(4, post.getId());
             preparedStatement.executeUpdate();
+            post.setUpdated(getDate().toString());
+            post.setStatus(PostStatus.ACTIVE);
             deleteOldDependencies(post.getId());
             fillDependencies(post.getLabels(), post.getId());
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return getById(post.getId());
+        return post;
     }
 
     @Override
@@ -155,5 +173,4 @@ public class JdbcPostRepositoryImpl implements PostRepository {
             e.printStackTrace();
         }
     }
-
 }

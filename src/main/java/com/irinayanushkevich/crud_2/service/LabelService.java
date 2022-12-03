@@ -7,8 +7,15 @@ import com.irinayanushkevich.crud_2.repository.jdbc_rep.JdbcLabelRepositoryImpl;
 import java.util.List;
 
 public class LabelService {
+    private final LabelRepository labelRep;
 
-    private final LabelRepository labelRep = new JdbcLabelRepositoryImpl();
+    public LabelService() {
+        labelRep = new JdbcLabelRepositoryImpl();
+    }
+
+    public LabelService(LabelRepository labelRep) {
+        this.labelRep = labelRep;
+    }
 
     public Label create(Label label) {
         return labelRep.create(label);

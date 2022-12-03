@@ -29,7 +29,7 @@ public class Console {
         switch (answer) {
             case 1 -> comView.run("writer");
             case 2 -> comView.run("post");
-            case 3 -> comView.run( "label");
+            case 3 -> comView.run("label");
             case 0 -> {
                 return true;
             }

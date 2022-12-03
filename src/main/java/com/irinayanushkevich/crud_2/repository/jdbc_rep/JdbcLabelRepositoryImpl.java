@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcLabelRepositoryImpl implements LabelRepository {
-
     public Label create(Label label) {
         Long id;
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatementWithKeys(SqlQuery.createLabel)) {
@@ -19,17 +18,32 @@ public class JdbcLabelRepositoryImpl implements LabelRepository {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             id = getId(resultSet);
+            label.setId(id);
         } catch (SQLIntegrityConstraintViolationException e) {
             return null;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return getById(id);
+        return label;
     }
 
     public Label getById(Long id) {
-        return getAll().stream().filter(label -> label.getId().equals(id)).findFirst().orElse(null);
+        Label label = new Label();
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getByIdLabel)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                label.setId(id);
+                label.setName(resultSet.getString("name"));
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return label;
     }
 
     public Label edit(Label label) {

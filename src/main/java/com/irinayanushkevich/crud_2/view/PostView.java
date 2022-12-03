@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostView {
-
     private final CommonView cv;
     private final PostController pc = new PostController();
 

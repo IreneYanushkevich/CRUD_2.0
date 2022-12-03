@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WriterView {
-
     private final CommonView cv;
     private final WriterController wc = new WriterController();
     private final PostController pc = new PostController();

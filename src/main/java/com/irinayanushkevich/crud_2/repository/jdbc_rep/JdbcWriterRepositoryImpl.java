@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcWriterRepositoryImpl implements WriterRepository {
-
     private final JdbcPostRepositoryImpl postRepository = new JdbcPostRepositoryImpl();
 
     @Override
@@ -23,17 +22,31 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             id = getId(resultSet);
+            writer.setId(id);
             setWriterIdToPost(writer.getPosts(), id);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return getById(id);
+        return writer;
     }
 
     @Override
     public Writer getById(Long id) {
-        return getAll().stream().filter(writer -> writer.getId().equals(id)).findFirst().orElse(null);
+        Writer writer;
+        try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.getByIdWriter)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                writer = mapResultSetToWriter(resultSet);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return writer;
     }
 
     public Writer edit(Writer writer) {
@@ -48,7 +61,7 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             e.printStackTrace();
             return null;
         }
-        return getById(writer.getId());
+        return writer;
     }
 
     @Override
@@ -133,7 +146,6 @@ public class JdbcWriterRepositoryImpl implements WriterRepository {
             }
         }
     }
-
 
     private void deleteOldDependencies(Long id) {
         try (PreparedStatement preparedStatement = JdbcConnector.getPreparedStatement(SqlQuery.deleteOldDependenciesWP)) {

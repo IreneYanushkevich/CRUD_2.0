@@ -8,10 +8,10 @@ import java.util.List;
 public class LabelView {
     private final CommonView cv;
     private final LabelController lc = new LabelController();
+
     public LabelView(CommonView cv) {
         this.cv = cv;
     }
-
 
     public boolean workWithLabelActions(int act) {
         switch (act) {

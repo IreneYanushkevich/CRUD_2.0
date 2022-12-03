@@ -1,7 +1,6 @@
 package com.irinayanushkevich.crud_2.model;
 
 public class Label {
-
     private Long id;
     private String name;
 

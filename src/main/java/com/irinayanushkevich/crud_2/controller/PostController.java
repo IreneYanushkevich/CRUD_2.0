@@ -7,7 +7,6 @@ import com.irinayanushkevich.crud_2.service.PostService;
 import java.util.List;
 
 public class PostController {
-
     private final PostService postService = new PostService();
 
     public Post create(String content, List<Label> labels) {

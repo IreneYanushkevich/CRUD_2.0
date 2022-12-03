@@ -7,7 +7,6 @@ import com.irinayanushkevich.crud_2.service.WriterService;
 import java.util.List;
 
 public class WriterController {
-
     private final WriterService writerService = new WriterService();
 
     public Writer create(String firstName, String secondName, List<Post> posts) {

@@ -7,8 +7,15 @@ import com.irinayanushkevich.crud_2.repository.jdbc_rep.JdbcPostRepositoryImpl;
 import java.util.List;
 
 public class PostService {
+    private final PostRepository postRep;
 
-    private final PostRepository postRep = new JdbcPostRepositoryImpl();
+    public PostService() {
+        postRep = new JdbcPostRepositoryImpl();
+    }
+
+    public PostService(PostRepository postRep) {
+        this.postRep = postRep;
+    }
 
     public Post create(Post post) {
         return postRep.create(post);

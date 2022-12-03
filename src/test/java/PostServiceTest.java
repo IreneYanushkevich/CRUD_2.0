@@ -1,9 +1,10 @@
 import com.irinayanushkevich.crud_2.model.Label;
 import com.irinayanushkevich.crud_2.model.Post;
+import com.irinayanushkevich.crud_2.repository.PostRepository;
 import com.irinayanushkevich.crud_2.service.PostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -11,49 +12,54 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostServiceTest {
-
     private final Long id = 1L;
-    private final String content = "Post content";
     private final List<Label> labels = new ArrayList<>();
+    private final PostRepository postRepository = Mockito.mock(PostRepository.class);
+    private final PostService postService = new PostService(postRepository);
 
-    @Mock
-    private List<Post> posts;
-    @Mock
-    private Post post;
-    @Mock
-    private PostService postService;
+    private Post getPost() {
+        return new Post(id, "Post content", labels);
+    }
+
+    private List<Post> getPosts() {
+        List<Post> posts = new ArrayList<>();
+        posts.add(getPost());
+        return posts;
+    }
 
     @Test
     public void createTest() {
-        doReturn(post).when(postService).create(new Post(id, content, labels));
-        assertEquals(post, postService.create(new Post(id, content, labels)));
+        doReturn(getPost()).when(postRepository).create(any(Post.class));
+        assertEquals(getPost(), postService.create(getPost()));
     }
 
     @Test
     public void getByIdTest() {
-        doReturn(post).when(postService).getById(id);
-        assertEquals(post, postService.getById(id));
+        doReturn(getPost()).when(postRepository).getById(anyLong());
+        assertEquals(getPost(), postService.getById(id));
     }
 
     @Test
     public void editTest() {
-        doReturn(post).when(postService).edit(new Post(id, content, labels));
-        assertEquals(post, postService.edit(new Post(id, content, labels)));
+        doReturn(getPost()).when(postRepository).edit(any(Post.class));
+        assertEquals(getPost(), postService.edit(getPost()));
     }
 
     @Test
     public void deleteTest() {
-        doReturn(true).when(postService).delete(id);
+        doReturn(true).when(postRepository).delete(anyLong());
         assertTrue(postService.delete(id));
     }
 
     @Test
     public void getAllTest() {
-        doReturn(posts).when(postService).getAll();
-        assertEquals(posts, postService.getAll());
+        doReturn(getPosts()).when(postRepository).getAll();
+        assertEquals(getPosts(), postService.getAll());
     }
 }
